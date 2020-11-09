@@ -1,4 +1,7 @@
 
+const localhost = 'http://localhost:5000';
+const host = '';
+
 function ValidateFirst() {
     var password = document.getElementById("reg-password").value;
     var confirmPassword = document.getElementById("txtConfirmPassword").value;
@@ -10,7 +13,7 @@ function ValidateFirst() {
             email: document.getElementById("reg-email").value,
             password: document.getElementById("reg-password").value
         }
-        fetch('http://localhost:5000/signup', {
+        fetch(`${localhost}/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -20,8 +23,8 @@ function ValidateFirst() {
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            sessionStorage.setItem('token', data.userDetails.token);
-            sessionStorage.setItem('email', data.userDetails.email);
+            localStorage.setItem('token', data.userDetails.token);
+            localStorage.setItem('email', data.userDetails.email);
             window.location.href = "verify.html";
         })
     }
@@ -37,7 +40,7 @@ function ValidateSecond() {
         alert("Passwords do not match.");
         return false;
     } else {
-        fetch(`http://localhost:5000/reset-password/${sessionStorage.getItem('reset-token')}`, {
+        fetch(`${localhost}/reset-password/${localStorage.getItem('reset-token')}`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -55,12 +58,12 @@ function ValidateSecond() {
 }
 
 function verifyOtp() {
-    if(sessionStorage.getItem('forgot-password')) {
+    if(localStorage.getItem('forgot-password')) {
         const otp = document.getElementById("otp").value;
         const data = {
             otp: otp
         }
-        fetch(`http://localhost:5000/verify-otp`, {
+        fetch(`${localhost}/verify-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -70,8 +73,8 @@ function verifyOtp() {
         .then(response => response.json())
         .then(data => {
                 alert(data.message);
-                sessionStorage.setItem('newOTPverified', data.newOTPverified);
-                sessionStorage.setItem('reset-token', data.token);
+                localStorage.setItem('newOTPverified', data.newOTPverified);
+                localStorage.setItem('reset-token', data.token);
                 if(data.newOTPverified) {
                     window.location.href = "resetpass.html";
                 }
@@ -80,9 +83,9 @@ function verifyOtp() {
         const otp = document.getElementById("otp").value;
         const data = {
             otp: otp,
-            email: sessionStorage.getItem('email')
+            email: localStorage.getItem('email')
         }
-    fetch(`http://localhost:5000/signup/${sessionStorage.getItem('token')}`, {
+    fetch(`${localhost}/signup/${localStorage.getItem('token')}`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -92,7 +95,7 @@ function verifyOtp() {
     .then(response => response.json())
     .then(data => {
             alert(data.message);
-            sessionStorage.setItem('verified', data.verified);
+            localStorage.setItem('verified', data.verified);
             if(data.verified) {
                 window.location.href = "login.html";
             }
@@ -105,7 +108,7 @@ function verifyAdminOtp() {
         const data = {
             otp: otp
         }
-        fetch(`http://localhost:5000/admin-verify-new-otp`, {
+        fetch(`${localhost}/admin-verify-new-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -115,8 +118,8 @@ function verifyAdminOtp() {
         .then(response => response.json())
         .then(data => {
                 alert(data.message);
-                sessionStorage.setItem('AdminNewOTPverified', data.newOTPverified);
-                sessionStorage.setItem('admin-reset-token', data.token);
+                localStorage.setItem('AdminNewOTPverified', data.newOTPverified);
+                localStorage.setItem('admin-reset-token', data.token);
                 if(data.newOTPverified) {
                     window.location.href = "adminResetPass.html";
                 }
@@ -128,7 +131,7 @@ function loginUser() {
         email: document.getElementById("email").value,
         password: document.getElementById("pass").value
     }
-    fetch("http://localhost:5000/login", {
+    fetch(`http://localhost:5000/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -136,8 +139,12 @@ function loginUser() {
         body: JSON.stringify(user)
     })
     .then(response => response.json())
-    .then(data => {
-        if(data.verified) {
+    .then(dataLogin => {
+        if(dataLogin.verified) {
+            localStorage.setItem('isLoggedIn', dataLogin.isLoggedIn);
+            localStorage.setItem('loginToken', dataLogin.token);
+            localStorage.setItem('email', dataLogin.email);
+            localStorage.setItem('break-token', dataLogin.breakToken);
             fetch('http://localhost:5000/user-logger-track', {
                     method: 'POST',
                     headers: {
@@ -146,40 +153,33 @@ function loginUser() {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    alert(data.message);
-                    console.log(data)
+                    alert(dataLogin.message);
+                    window.location.href = "main.html";
                 })
-            alert(data.message);
-            window.location.href = "main.html";
-            sessionStorage.setItem('isLoggedIn', data.isLoggedIn);
-            sessionStorage.setItem('loginToken', data.token);
-            sessionStorage.setItem('email', data.email);
         } else{
-            alert(data.message);
+            alert(dataLogin.message);
         }});
 }
 
 function Logout(){
-    fetch(`http://localhost:5000/logout/${sessionStorage.getItem('loginToken')}`, {
+    fetch(`${localhost}/logout/${localStorage.getItem('loginToken')}`, {
         method: 'POST'
     })
     .then(response => response.json())
-    .then(data => {
-        sessionStorage.clear();
-        alert(data.message);
-        window.location.href = "index_signup.html";
-        fetch('http://localhost:5000/user-logger-track', {
-                    method: 'POST',
-                    headers: {
-
-                    }
+    .then(dataLogout => {
+            
+                alert(dataLogout.message);
+                fetch('http://localhost:5000/user-logger-track', {
+                    method: 'POST'
                 })
                 .then(res => res.json())
                 .then(data => {
+                    localStorage.clear();
                     alert(data.message);
-                    console.log(data)
-                })
-    })
+                    window.location.href = "index_signup.html";
+            })
+        })
+        
 }
 
 function sheetSubmit(e) {
@@ -208,8 +208,8 @@ function sheetSubmit(e) {
     for(const [key, value] of Object.entries(formData)) {
         form.append(key, value);
     }
-    sessionStorage.setItem('tab', formData.recruiter_name);
-    fetch("http://localhost:5000/sheets-edit", {
+    localStorage.setItem('tab', formData.recruiter_name);
+    fetch(`${localhost}/sheets-edit`, {
         method: "POST",
         headers: {
         },
@@ -226,7 +226,7 @@ function resendOTP() {
     const data = {
         email: email
     }
-    fetch('http://localhost:5000/resend-otp', {
+    fetch(`${localhost}/resend-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -237,8 +237,8 @@ function resendOTP() {
     .then(data => {
         alert(data.message);
         if(data.sent) {
-            sessionStorage.setItem('forgot-password', true);
-            sessionStorage.setItem('newOTP', data.otp);
+            localStorage.setItem('forgot-password', true);
+            localStorage.setItem('newOTP', data.otp);
             window.location.href = "verify.html";
         }
     })
@@ -260,8 +260,8 @@ const resendAdminOTP = () => {
     .then(data => {
         alert(data.message);
         if(data.sent) {
-            sessionStorage.setItem('admin-forgot-password', true);
-            sessionStorage.setItem('adminNewOTP', data.otp);
+            localStorage.setItem('admin-forgot-password', true);
+            localStorage.setItem('adminNewOTP', data.otp);
             window.location.href = "adminverify.html";
         }
     })
@@ -412,8 +412,8 @@ const adminLogin = () => {
     .then(data => {
         if(data.isLoggedIn) {
             alert(data.message);
-            sessionStorage.setItem('admin-token', data.token);
-            sessionStorage.setItem('adminIsLoggedIn', data.isLoggedIn);
+            localStorage.setItem('admin-token', data.token);
+            localStorage.setItem('adminIsLoggedIn', data.isLoggedIn);
             window.location.href = "management.html";
         } else {
             alert(data.message);
@@ -424,16 +424,16 @@ const adminLogin = () => {
 //admin Logout
 
 const adminLogout = () => {
-    fetch(`http://localhost:5000/admin-logout/${sessionStorage.getItem('admin-token')}`, {
+    fetch(`http://localhost:5000/admin-logout/${localStorage.getItem('admin-token')}`, {
         method: 'POST'
     })
     .then(res => res.json())
     .then(data => {
         if(!data.isLoggedIn) {
             alert(data.message);
-            sessionStorage.removeItem('admin-token');
-            sessionStorage.removeItem('adminIsLoggedIn');
-            sessionStorage.clear();
+            localStorage.removeItem('admin-token');
+            localStorage.removeItem('adminIsLoggedIn');
+            localStorage.clear();
             window.location.href = "index_signup.html";
         } else {
             alert(data.message);
@@ -452,7 +452,7 @@ function adminResetPass() {
         alert("Passwords do not match.");
         return false;
     } else {
-        fetch(`http://localhost:5000/admin-reset-password/${sessionStorage.getItem('admin-reset-token')}`, {
+        fetch(`http://localhost:5000/admin-reset-password/${localStorage.getItem('admin-reset-token')}`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -468,3 +468,38 @@ function adminResetPass() {
         })
     }
 }
+
+let timerId = '';
+let timer = 0;
+
+
+
+//track user 
+const userStatusTrack = () => {
+    var status = document.getElementById('status');
+if(status.value == 'BREAK') {
+        timerId = setInterval(function() {
+            timer++;
+        }, 1000);
+}
+
+if(status.value == 'ACTIVE') {
+        clearInterval(timerId);
+        const dataIn = {
+            timer: timer
+        }
+        fetch(`http:localhost:5000/track-break-time/${localStorage.getItem('break-token')}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataIn)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+        })
+
+    }
+}
+

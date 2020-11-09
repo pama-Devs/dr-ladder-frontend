@@ -33,7 +33,7 @@
 
     <script>
         window.onload = () => {
-            if(!sessionStorage.getItem('adminIsLoggedIn')) {
+            if(!localStorage.getItem('adminIsLoggedIn')) {
             alert("Admin is not Logged In")
             } else {
                 document.body.style = "visibility: visible;";

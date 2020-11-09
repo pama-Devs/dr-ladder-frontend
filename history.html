@@ -49,12 +49,12 @@
     </div>
     <script>
         window.onload = () => {
-            if(!sessionStorage.getItem('isLoggedIn')) {
+            if(!localStorage.getItem('isLoggedIn')) {
                 alert("you are not logged in");
                 window.location.href = "index_signup.html";
             } else {
                 document.getElementById('myDynamicTable');
-                fetch(`http://localhost:5000/sheets-fetch/${sessionStorage.getItem('tab')}`, {
+                fetch(`http://localhost:5000/sheets-fetch/${localStorage.getItem('tab')}`, {
             method: 'GET',
             headers: {
             }
