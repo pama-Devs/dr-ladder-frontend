@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
+    <title>History</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+</head>
+
+<body>
+    <div id="myDynamicTable">
+        <div class="container text-center py-3">
+            <button class="btn btn primary " style="background-color: rgb(243, 55, 22);"><a href="main.html" style="color: white;font-size: 18px;padding: 2px 5px;">Back</a></button>
+        </div>
+        
+        <table border="1" id="table" style="visibility: visible;">
+            <thead>
+                <tr>
+                    <th></th>
+                  <th class="th-sm">Date</th>
+                  <th class="th-sm">Recruiter Name</th>
+                  <th class="th-sm">Hospital/College Name</th>
+                  <th class="th-sm">Speciality</th>
+                  <th class="th-sm">Post</th>
+                  <th class="th-sm">Candidate Name</th>
+                  <th class="th-sm">Qualification</th>
+                  <th class="th-sm">Mobile</th>
+                  <th class="th-sm">Experience</th>
+                  <th class="th-sm">Current Salary</th>
+                  <th class="th-sm">Current Location</th>
+                  <th class="th-sm">Languages Known</th>
+                  <th class="th-sm">Expected Salary</th>
+                  <th class="th-sm">Preferable Location</th>
+                  <th class="th-sm">Family Details</th>
+                  <th class="th-sm">Notice Period</th>
+                  <th class="th-sm">Feedback</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="container text-center py-3">
+        <button class="btn btn primary " style="background-color: rgb(243, 55, 22);"><a href="main.html" style="color: white;font-size: 18px;padding: 2px 5px;">Back</a></button>
+    </div>
+    <script>
+        window.onload = () => {
+            if(!sessionStorage.getItem('isLoggedIn')) {
+                alert("you are not logged in");
+                window.location.href = "index_signup.html";
+            } else {
+                document.getElementById('myDynamicTable');
+                fetch(`http://localhost:5000/sheets-fetch/${sessionStorage.getItem('tab')}`, {
+            method: 'GET',
+            headers: {
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+                console.log(data.message);
+                console.log(data.values);
+                const values = data.values;
+                var myTableDiv = document.getElementById("myDynamicTable");
+                var table = document.getElementById('table');
+                table.style = "border-collapse: collapse";
+                var tableBody = document.createElement('TBODY'); 
+                table.appendChild(tableBody);
+                for (var i = 0; i < values.length; i++) { 
+                    var tr = document.createElement('TR');
+                    tableBody.appendChild(tr);
+
+                for (var j = 0; j < values[i].length; j++){ 
+                    var td = document.createElement('TD'); 
+                    if(i != 0 && j != 0) {
+                        td.appendChild(document.createTextNode(values[i][j]));
+                    } 
+                    tr.appendChild(td); 
+                    } 
+                }   
+                myTableDiv.appendChild(table); 
+    
+                })
+            }
+        }
+
+    </script>
+</body>
+
+</html>
