@@ -35,7 +35,7 @@
 				<h2>LOGIN AS EMPLOYEE</h2>
 				<input type="text" id="email" placeholder="Email">
 				<input type="password" id="pass" placeholder="Password">
-                <button class="btn btn-dark px-3" type="button" onclick="loginUser()">Login</button><span class="px-5"><a href="#" data-target="#pwdModal" data-toggle="modal">Forgotten password?</a></span>
+                <button class="btn btn-dark px-3" type="button" onclick="loginUser();">Login</button><span class="px-5"><a href="#" data-target="#pwdModal" data-toggle="modal">Forgotten password?</a></span>
                 <hr style="background-color: black;"> 
                 <h2>LOGIN AS ADMIN</h2>
                 <input id="admin-email" type="text" placeholder="Email">
@@ -127,6 +127,12 @@
     </div>
 
     <script>
+
+        // window.onload = () => {
+        //     if(localStorage.getItem('isLoggedIn')) {
+        //         window.location.href = "main.html";
+        //     }
+        // }
 
         $(document).ready(function(){
             $('.login-info-box').fadeOut();

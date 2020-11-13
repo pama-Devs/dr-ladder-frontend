@@ -45,31 +45,34 @@
         </table>
     </div>
     <div class="container text-center py-3">
+        <button class="btn btn primary " style="background-color: rgb(243, 55, 22);color: white;font-size: 18px;padding: 2px 5px;" onclick = "confirmSubmission()" id="confirm-submit">Update</button>
+    </div>
+    <div class="container text-center py-3">
         <button class="btn btn primary " style="background-color: rgb(243, 55, 22);"><a href="main.html" style="color: white;font-size: 18px;padding: 2px 5px;">Back</a></button>
     </div>
     <script>
-        window.onload = () => {
+        let data_values = 0;
+        window.onload = async () => {
             if(!localStorage.getItem('isLoggedIn')) {
                 alert("you are not logged in");
                 window.location.href = "index_signup.html";
             } else {
                 document.getElementById('myDynamicTable');
-                fetch(`http://localhost:5000/sheets-fetch/${localStorage.getItem('tab')}`, {
+                await fetch(`https://salty-journey-54652.herokuapp.com/sheets-fetch/${localStorage.getItem('tab')}`, {
             method: 'GET',
             headers: {
             }
         })
         .then(res => res.json())
         .then(data => {
-                console.log(data.message);
-                console.log(data.values);
                 const values = data.values;
+                data_values = data.values;
                 var myTableDiv = document.getElementById("myDynamicTable");
                 var table = document.getElementById('table');
                 table.style = "border-collapse: collapse";
                 var tableBody = document.createElement('TBODY'); 
                 table.appendChild(tableBody);
-                for (var i = 0; i < values.length; i++) { 
+                for (var i = 1; i < values.length; i++) { 
                     var tr = document.createElement('TR');
                     tableBody.appendChild(tr);
 
@@ -77,14 +80,72 @@
                     var td = document.createElement('TD'); 
                     if(i != 0 && j != 0) {
                         td.appendChild(document.createTextNode(values[i][j]));
+                        td.id = `${findCellAddress(j)}${i+1}`;
+                        td.style="";
+                        td.class = '';
                     } 
-                    tr.appendChild(td); 
+                    tr.appendChild(td);
                     } 
-                }   
+                    console.log(tr);
+                }
                 myTableDiv.appendChild(table); 
-    
+                
+                let tds = document.getElementsByTagName('td');
+                for(let item of tds) {
+                        item.addEventListener('click', () => {
+                            console.log(item);
+                            if(!item.class == 1) {
+                                item.class = '1';
+                                let input = document.createElement('input');
+                                input.class = item.id;
+                                input.value = "";
+                                item.appendChild(input);
+                            }
+                            
+                        // item.innerHTML = "<input type='text'></input>";
+                        })
+                }
+                
                 })
             }
+        
+        }
+
+        const confirmSubmission = () => {
+            
+                let datas = [];
+                let inputs = document.getElementsByTagName('input');
+                for(let item of inputs) {
+                    const data = {
+                        range: item.class,
+                        value: item.value
+                    }
+                    datas.push(data);
+                }
+                const dataInput = {
+                    datas: datas
+                }
+                fetch(`https://salty-journey-54652.herokuapp.com/sheets-batch-update/${localStorage.getItem('tab')}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dataInput) 
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                // document.getElementById('confirm-submit').innerHTML = "Confirm Changes";
+            
+        }
+
+        
+
+        
+        function findCellAddress(number) {
+            const alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'W', 'X', 'Y', 'Z'];
+            return alpha[number];
         }
 
     </script>

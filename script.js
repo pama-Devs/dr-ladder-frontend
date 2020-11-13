@@ -1,6 +1,6 @@
 
 const localhost = 'http://localhost:5000';
-const host = '';
+const host = 'https://salty-journey-54652.herokuapp.com';
 
 function ValidateFirst() {
     var password = document.getElementById("reg-password").value;
@@ -13,7 +13,7 @@ function ValidateFirst() {
             email: document.getElementById("reg-email").value,
             password: document.getElementById("reg-password").value
         }
-        fetch(`${localhost}/signup`, {
+        fetch(`https://salty-journey-54652.herokuapp.com/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -40,7 +40,7 @@ function ValidateSecond() {
         alert("Passwords do not match.");
         return false;
     } else {
-        fetch(`${localhost}/reset-password/${localStorage.getItem('reset-token')}`, {
+        fetch(`${host}/reset-password/${localStorage.getItem('reset-token')}`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -63,7 +63,7 @@ function verifyOtp() {
         const data = {
             otp: otp
         }
-        fetch(`${localhost}/verify-otp`, {
+        fetch(`${host}/verify-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -85,7 +85,7 @@ function verifyOtp() {
             otp: otp,
             email: localStorage.getItem('email')
         }
-    fetch(`${localhost}/signup/${localStorage.getItem('token')}`, {
+    fetch(`${host}/signup/${localStorage.getItem('token')}`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -108,7 +108,7 @@ function verifyAdminOtp() {
         const data = {
             otp: otp
         }
-        fetch(`${localhost}/admin-verify-new-otp`, {
+        fetch(`${host}/admin-verify-new-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -131,7 +131,7 @@ function loginUser() {
         email: document.getElementById("email").value,
         password: document.getElementById("pass").value
     }
-    fetch(`http://localhost:5000/login`, {
+    fetch(`${host}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -145,7 +145,7 @@ function loginUser() {
             localStorage.setItem('loginToken', dataLogin.token);
             localStorage.setItem('email', dataLogin.email);
             localStorage.setItem('break-token', dataLogin.breakToken);
-            fetch('http://localhost:5000/user-logger-track', {
+            fetch(`${host}/user-logger-track`, {
                     method: 'POST',
                     headers: {
 
@@ -162,25 +162,25 @@ function loginUser() {
 }
 
 function Logout(){
-    fetch(`${localhost}/logout/${localStorage.getItem('loginToken')}`, {
+    fetch(`${host}/logout/${localStorage.getItem('loginToken')}`, {
         method: 'POST'
     })
     .then(response => response.json())
     .then(dataLogout => {
             
-                alert(dataLogout.message);
-                fetch('http://localhost:5000/user-logger-track', {
+                fetch(`${host}/user-logger-track`, {
                     method: 'POST'
                 })
                 .then(res => res.json())
                 .then(data => {
+                    alert(dataLogout.message);
                     localStorage.clear();
-                    alert(data.message);
                     window.location.href = "index_signup.html";
             })
-        })
-        
+                
+    })
 }
+
 
 function sheetSubmit(e) {
     e.preventDefault();
@@ -209,7 +209,7 @@ function sheetSubmit(e) {
         form.append(key, value);
     }
     localStorage.setItem('tab', formData.recruiter_name);
-    fetch(`${localhost}/sheets-edit`, {
+    fetch(`${host}/sheets-edit`, {
         method: "POST",
         headers: {
         },
@@ -217,7 +217,7 @@ function sheetSubmit(e) {
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message);   
+        alert(data.message);  
     });
 } 
 
@@ -226,7 +226,7 @@ function resendOTP() {
     const data = {
         email: email
     }
-    fetch(`${localhost}/resend-otp`, {
+    fetch(`${host}/resend-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -249,7 +249,7 @@ const resendAdminOTP = () => {
     const data = {
         email: email
     }
-    fetch('http://localhost:5000/admin-resend-otp', {
+    fetch(`${host}/admin-resend-otp`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -312,7 +312,7 @@ const submitHandler = (e) => {
     }
     
       //fetch api with post method---form submission
-      fetch("http://localhost:5000/contact-us", {
+      fetch(`${host}/contact-us`, {
           method: "POST",
           headers: {
           },
@@ -337,7 +337,7 @@ const hireFormSubmit = (e) => {
     for(const [key, value] of Object.entries(form)) {
         formData.append(key, value);
     }
-    fetch('http://localhost:5000/hire-form', {
+    fetch(`${host}/hire-form`, {
         method: 'POST',
         headers: {
         },
@@ -379,7 +379,7 @@ const joinUsFormSubmit = (e) => {
     }
 
     //fetch api
-    fetch('http://localhost:5000/join-us', {
+    fetch(`${host}/join-us`, {
         method: 'POST',
         headers: {
 
@@ -401,7 +401,7 @@ const adminLogin = () => {
         email: document.getElementById('admin-email').value,
         password: document.getElementById('admin-password').value
     }
-    fetch('http://localhost:5000/admin-login',{
+    fetch(`${host}/admin-login`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -424,7 +424,7 @@ const adminLogin = () => {
 //admin Logout
 
 const adminLogout = () => {
-    fetch(`http://localhost:5000/admin-logout/${localStorage.getItem('admin-token')}`, {
+    fetch(`${host}/admin-logout/${localStorage.getItem('admin-token')}`, {
         method: 'POST'
     })
     .then(res => res.json())
@@ -452,7 +452,7 @@ function adminResetPass() {
         alert("Passwords do not match.");
         return false;
     } else {
-        fetch(`http://localhost:5000/admin-reset-password/${localStorage.getItem('admin-reset-token')}`, {
+        fetch(`${host}/admin-reset-password/${localStorage.getItem('admin-reset-token')}`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -478,6 +478,7 @@ let timer = 0;
 const userStatusTrack = () => {
     var status = document.getElementById('status');
 if(status.value == 'BREAK') {
+    alert("status changed to break");
         timerId = setInterval(function() {
             timer++;
         }, 1000);
@@ -488,7 +489,7 @@ if(status.value == 'ACTIVE') {
         const dataIn = {
             timer: timer
         }
-        fetch(`http:localhost:5000/track-break-time/${localStorage.getItem('break-token')}`, {
+        fetch(`${host}/track-break-time/${localStorage.getItem('break-token')}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -498,6 +499,7 @@ if(status.value == 'ACTIVE') {
         .then(res => res.json())
         .then(data => {
             alert(data.message);
+            timer = 0;
         })
 
     }
